@@ -1,6 +1,6 @@
 # LobeHub Vite SPA Template
 
-A full-stack starting point for LobeHub applications: a **React 19 + Vite SPA** and a **Tsuki server on Hono**, in one repository. No Next.js or SSR.
+A full-stack starting point for LobeHub applications: a **React 19 + Vite SPA** and a **Tsuki server on Hono**, in a pnpm monorepo. No Next.js or SSR.
 
 The browser uses React Router data mode with explicit lazy routes, LobeHub UI providers, and a typed tRPC client. The same server application runs as a Node process, in Docker, or as one Vercel Function.
 
@@ -43,34 +43,49 @@ Open <http://localhost:3020>. Vite proxies `/api` to the API server on port 3021
 └────────────────┘  └─────────────────────┘
 ```
 
-`src/main.tsx` fetches and validates `/api/config` before rendering. A failed boot shows a retry action. Only explicit public configuration fields reach the browser; environment variables are never returned wholesale.
+`apps/web/src/main.tsx` fetches and validates `/api/config` before rendering. A failed boot shows a retry action. Only explicit public configuration fields reach the browser; environment variables are never returned wholesale.
+
+## Workspace
+
+- `apps/web`: Vite SPA, React Router, and UI dependencies.
+- `apps/server`: Tsuki/Hono server, tRPC, and server tests.
+- `packages/shared`: browser-safe configuration schema, consumed through workspace exports.
+
+Each app owns its package manifest, TypeScript config, and Vite config. The root coordinates scripts with pnpm; no additional task runner is required. The web app imports the server's `AppRouter` through `@lobehub/template-server/trpc`, which only exports types. Server runtime code cannot be imported through that entry.
+
+Run either app on its own:
+
+```sh
+pnpm --filter @lobehub/template-web dev
+pnpm --filter @lobehub/template-server dev
+```
 
 ## Project map
 
-| Path                               | Responsibility                                          |
-| ---------------------------------- | ------------------------------------------------------- |
-| `src/main.tsx`                     | Runtime config and browser bootstrap                    |
-| `src/router.tsx`                   | Explicit lazy route table and route error boundary      |
-| `src/routes/`                      | Page components and shared layout                       |
-| `src/layouts/GlobalProvider.tsx`   | UI, theme, React Query, and tRPC providers              |
-| `src/libs/trpc.ts`                 | Client transport; server router imported as a type only |
-| `src/shared/config.ts`             | Browser-safe config schema                              |
-| `src/server/app.factory.ts`        | Shared Tsuki/Hono application and raw mounts            |
-| `src/server/modules/`              | Tsuki modules, controllers, and injectable services     |
-| `src/server/routers/`              | Validated tRPC procedures and exported router type      |
-| `src/server/main.ts` / `vercel.ts` | Thin deployment entry points                            |
-| `vite.server.config.ts`            | SWC legacy decorators and dependency metadata           |
-| `scripts/buildVercelOutput.mjs`    | Vercel Build Output API v3                              |
+| Path                                      | Responsibility                                          |
+| ----------------------------------------- | ------------------------------------------------------- |
+| `apps/web/src/main.tsx`                   | Runtime config and browser bootstrap                    |
+| `apps/web/src/router.tsx`                 | Explicit lazy route table and route error boundary      |
+| `apps/web/src/routes/`                    | Page components and shared layout                       |
+| `apps/web/src/layouts/GlobalProvider.tsx` | UI, theme, React Query, and tRPC providers              |
+| `apps/web/src/libs/trpc.ts`               | Client transport; server router imported as a type only |
+| `packages/shared/src/config.ts`           | Browser-safe config schema                              |
+| `apps/server/src/app.factory.ts`          | Shared Tsuki/Hono application and raw mounts            |
+| `apps/server/src/modules/`                | Tsuki modules, controllers, and injectable services     |
+| `apps/server/src/routers/`                | Validated tRPC procedures and exported router type      |
+| `apps/server/src/main.ts` / `vercel.ts`   | Thin deployment entry points                            |
+| `apps/server/vite.config.ts`              | SWC legacy decorators and dependency metadata           |
+| `scripts/buildVercelOutput.mjs`           | Vercel Build Output API v3                              |
 
-Add a page under `src/routes/` and register its lazy import in `src/router.tsx`. Add a backend module to `AppModule`, or add a typed procedure to `appRouter`. The example controller injects `ConfigService`, so the tests exercise decorator metadata as well as routing.
+Add a page under `apps/web/src/routes/` and register its lazy import in `apps/web/src/router.tsx`. Add a backend module to `AppModule`, or add a typed procedure to `appRouter`. The example controller injects `ConfigService`, so the tests exercise decorator metadata as well as routing.
 
 ## Configuration
 
-Copy `.env.example` to `.env.local` if you want to change the application name. The API loads development env files in Vite's priority order: `.env.development.local`, `.env.local`, `.env.development`, `.env`; existing process variables take precedence.
+Copy `apps/server/.env.example` to `apps/server/.env.local` if you want to change the application name. The API loads development env files from `apps/server/` in Vite's priority order: `.env.development.local`, `.env.local`, `.env.development`, `.env`; existing process variables take precedence.
 
 `APP_NAME` is read by the server at runtime and exposed through `ConfigService`. `PORT` controls the Node API port and defaults to 3021. If changing the development API port, also update the Vite proxy target.
 
-Only `VITE_*` values are bundled into browser code. They are public and fixed at build time. Keep secrets in server environment variables and explicitly select safe fields for `/api/config`. Production reads the deployment environment; it does not load local env files.
+Web environment files live in `apps/web/`. Only `VITE_*` values are bundled into browser code. They are public and fixed at build time. Keep secrets in server environment variables and explicitly select safe fields for `/api/config`. Production reads the deployment environment; it does not load local env files.
 
 The template deploys at `/`. Sub-path deployments require aligning the Vite base, router basename, API URLs, and server/deployment routes together.
 
@@ -82,7 +97,7 @@ pnpm start
 # http://localhost:3021 — API and SPA from one Node process
 ```
 
-The browser build is in `dist/`; the server build is in `dist-server/`. API routes return JSON 404s before any SPA fallback. Missing `/assets/*` files stay 404; built assets get immutable caching and HTML is revalidated.
+The browser build is in `apps/web/dist/`; the server build is in `apps/server/dist/`. API routes return JSON 404s before any SPA fallback. Missing `/assets/*` files stay 404; built assets get immutable caching and HTML is revalidated.
 
 The server bundles all current runtime dependencies. When adding native modules or packages that read runtime files, externalize them deliberately and ship their production dependencies/data in Docker and Vercel output. The smoke check starts the Node bundle outside the project to catch missing dependencies.
 
@@ -93,7 +108,7 @@ docker build -t my-app .
 docker run --rm -p 3021:3021 -e APP_NAME="My application" my-app
 ```
 
-The runtime image runs as the unprivileged `node` user and contains only Node and the two build directories. `.env` files are excluded from the build context.
+The runtime image runs as the unprivileged `node` user and contains only Node and the two application build directories. `.env` files are excluded from the build context.
 
 ### Vercel
 
@@ -120,7 +135,7 @@ pnpm build:vercel
 pnpm test:smoke
 ```
 
-Tests cover constructor injection, safe runtime config, HTTP tRPC input validation, API 404s, deep-link and HEAD handling, and asset caching. The smoke check runs the production Node bundle and generated Vercel handler. GitHub Actions runs these checks and builds the Docker image.
+Tests cover constructor injection, safe runtime config, HTTP tRPC input validation, API 404s, deep-link and HEAD handling, and asset caching. The smoke check runs the production Node bundle and generated Vercel handler. GitHub Actions runs these checks, builds the Docker image, and checks its health endpoint.
 
 The sample endpoints are public. Add real session validation and authorization before adding private data or write operations. Authentication, databases, admin business logic, cron jobs, and workflow providers are left for the consuming project.
 

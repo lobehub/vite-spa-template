@@ -1,7 +1,7 @@
 import { Button } from '@lobehub/ui/base-ui';
 import { createBrowserRouter, Link } from 'react-router';
 import { RootLayout } from '@/routes/_layout';
-import type { PublicConfig } from '@/shared/config';
+import type { PublicConfig } from '@lobehub/template-shared/config';
 
 function RouteError() {
   return (

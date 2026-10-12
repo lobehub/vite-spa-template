@@ -10,10 +10,10 @@ import { setTimeout } from 'node:timers/promises';
 
 // Run away from node_modules so accidentally externalized dependencies fail here.
 const root = mkdtempSync(join(tmpdir(), 'vite-spa-smoke-'));
-cpSync('dist', join(root, 'dist'), { recursive: true });
-cpSync('dist-server', join(root, 'dist-server'), { recursive: true });
+cpSync('apps/web/dist', join(root, 'apps/web/dist'), { recursive: true });
+cpSync('apps/server/dist', join(root, 'apps/server/dist'), { recursive: true });
 const port = 33000 + Math.floor(Math.random() * 10000);
-const child = spawn(process.execPath, ['dist-server/main.mjs'], {
+const child = spawn(process.execPath, ['apps/server/dist/main.mjs'], {
   cwd: root,
   env: {
     ...process.env,

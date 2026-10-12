@@ -2,7 +2,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, afterEach, beforeAll, expect, it, vi } from 'vitest';
-import { createApp } from '@/server/app.factory';
+import { createApp } from '@/app.factory';
 
 const root = mkdtempSync(join(tmpdir(), 'vite-spa-static-'));
 let app: Awaited<ReturnType<typeof createApp>>;

@@ -1,6 +1,6 @@
 import { mergeConfig } from 'vite';
 import { defineConfig } from 'vitest/config';
-import serverConfig from './vite.server.config.ts';
+import serverConfig from './vite.config.ts';
 
 export default mergeConfig(
   serverConfig,

@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router';
 import { GlobalProvider } from '@/layouts/GlobalProvider';
 import { createRouter } from '@/router';
-import { publicConfigSchema } from '@/shared/config';
+import { publicConfigSchema } from '@lobehub/template-shared/config';
 
 const root = createRoot(document.getElementById('root')!);
 

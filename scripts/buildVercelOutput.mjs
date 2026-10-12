@@ -1,6 +1,6 @@
 import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 
-for (const file of ['dist/index.html', 'dist-server/vercel.mjs']) {
+for (const file of ['apps/web/dist/index.html', 'apps/server/dist/vercel.mjs']) {
   if (!existsSync(file)) throw new Error(`Missing build artifact: ${file}`);
 }
 
@@ -8,9 +8,9 @@ const output = '.vercel/output';
 const func = `${output}/functions/api.func`;
 rmSync(output, { recursive: true, force: true });
 mkdirSync(func, { recursive: true });
-cpSync('dist', `${output}/static`, { recursive: true });
+cpSync('apps/web/dist', `${output}/static`, { recursive: true });
 // shortcut: all server dependencies are bundled; trace runtime files when adding native or file-backed packages.
-cpSync('dist-server', `${func}/dist-server`, { recursive: true });
+cpSync('apps/server/dist', `${func}/dist-server`, { recursive: true });
 writeFileSync(
   `${func}/.vc-config.json`,
   JSON.stringify(

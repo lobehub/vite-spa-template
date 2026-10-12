@@ -1,0 +1,38 @@
+{
+  "name": "@lobehub/template-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./trpc": {
+      "types": "./src/routers/index.ts"
+    }
+  },
+  "scripts": {
+    "dev": "vite-node --config vite.config.ts --watch src/main.ts",
+    "build": "vite build",
+    "start": "node dist/main.mjs",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.4",
+    "@trpc/server": "^11.19.0",
+    "@tsuki-hono/common": "0.0.5",
+    "@tsuki-hono/core": "0.0.5",
+    "hono": "^4.13.1",
+    "reflect-metadata": "^0.2.2",
+    "tsyringe": "^4.10.0",
+    "zod": "^4.6.6",
+    "@lobehub/template-shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@swc/core": "^1.16.18",
+    "@types/node": "^22.19.3",
+    "typescript": "^7.0.2",
+    "unplugin-swc": "^2.0.0",
+    "vite": "^8.3.4",
+    "vite-node": "^6.0.0",
+    "vitest": "^5.0.4"
+  }
+}

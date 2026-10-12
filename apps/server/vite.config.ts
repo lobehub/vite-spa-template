@@ -4,14 +4,14 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   build: {
-    outDir: 'dist-server',
+    outDir: 'dist',
     emptyOutDir: true,
     ssr: true,
     target: 'node22',
     rolldownOptions: {
       input: {
-        main: resolve('src/server/main.ts'),
-        vercel: resolve('src/server/vercel.ts'),
+        main: resolve('src/main.ts'),
+        vercel: resolve('src/vercel.ts'),
       },
       output: { entryFileNames: '[name].mjs', chunkFileNames: '[name]-[hash].mjs' },
     },

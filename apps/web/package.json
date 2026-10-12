@@ -1,0 +1,33 @@
+{
+  "name": "@lobehub/template-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@lobehub/ui": "^5.58.0",
+    "@tanstack/react-query": "^5.104.2",
+    "@trpc/client": "^11.19.0",
+    "@trpc/react-query": "^11.19.0",
+    "antd": "^6.1.3",
+    "antd-style": "^4.1.0",
+    "motion": "^12.23.26",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-router": "^8.4.0",
+    "@lobehub/template-shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.3",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.1.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "@lobehub/template-server": "workspace:*"
+  }
+}

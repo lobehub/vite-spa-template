@@ -1,6 +1,6 @@
 import { injectable } from 'tsyringe';
 import { z } from 'zod';
-import type { PublicConfig } from '@/shared/config';
+import type { PublicConfig } from '@lobehub/template-shared/config';
 
 @injectable()
 export class ConfigService {

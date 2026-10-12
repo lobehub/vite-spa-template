@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigation } from 'react-router';
-import type { PublicConfig } from '@/shared/config';
+import type { PublicConfig } from '@lobehub/template-shared/config';
 import { styles } from './style';
 
 export function RootLayout({ config }: { config: PublicConfig }) {

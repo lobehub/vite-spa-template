@@ -1,9 +1,14 @@
 import { serve } from '@hono/node-server';
+import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 import { createApp } from '../app.factory';
 
 export async function startNodeServer() {
-  const app = await createApp(process.env.NODE_ENV === 'development' ? undefined : './dist');
+  const app = await createApp(
+    process.env.NODE_ENV === 'development'
+      ? undefined
+      : fileURLToPath(new URL('../../web/dist/', import.meta.url)),
+  );
   const port = z.coerce
     .number()
     .int()

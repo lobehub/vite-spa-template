@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import { loadDevEnv } from '@/server/bootstrap/devEnv';
+import { loadDevEnv } from '@/bootstrap/devEnv';
 
 let root: string;
 beforeEach(() => {
