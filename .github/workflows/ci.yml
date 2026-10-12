@@ -21,5 +21,5 @@ jobs:
       - run: docker build -t vite-spa-template .
       - run: |
           docker run --rm -d --name template-smoke -p 3021:3021 vite-spa-template
-          curl --retry 10 --retry-connrefused --retry-delay 1 --fail http://localhost:3021/api/health
-          docker stop template-smoke
+          trap 'docker stop template-smoke' EXIT
+          curl --retry 10 --retry-all-errors --retry-delay 1 --fail http://localhost:3021/api/health
