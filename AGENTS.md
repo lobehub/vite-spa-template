@@ -13,4 +13,5 @@
 - Both deployment entries must use the same application factory. Preserve JSON API 404s and missing-asset 404s ahead of the SPA fallback.
 - All runtime dependencies are currently bundled. If adding runtime-file or native dependencies, update both Docker and Vercel packaging and the smoke check.
 - After changes run `pnpm type-check`, `pnpm test`, `pnpm build:vercel`, and `pnpm test:smoke`. For UI changes also check the browser, including failure states and a mobile viewport.
+- `pnpm test:e2e` requires both app builds. It runs the production server in a subprocess outside the repository and compares responses to real web build files; keep it independent of source imports and synthetic HTML fixtures.
 - Preserve user-owned working-tree and staged changes. Do not use destructive restore/reset commands.

@@ -17,7 +17,8 @@ jobs:
       - run: pnpm type-check
       - run: pnpm test
       - run: pnpm build:vercel
-      - run: pnpm test:smoke
+      - name: Server E2E and Vercel smoke
+        run: pnpm test:smoke
       - run: docker build -t vite-spa-template .
       - run: |
           docker run --rm -d --name template-smoke -p 3021:3021 vite-spa-template

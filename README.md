@@ -132,10 +132,13 @@ pnpm format:check
 pnpm type-check
 pnpm test
 pnpm build:vercel
+pnpm test:e2e
 pnpm test:smoke
 ```
 
-Tests cover constructor injection, safe runtime config, HTTP tRPC input validation, API 404s, deep-link and HEAD handling, and asset caching. The smoke check runs the production Node bundle and generated Vercel handler. GitHub Actions runs these checks, builds the Docker image, and checks its health endpoint.
+Unit tests cover constructor injection, safe runtime config, HTTP tRPC input validation, API 404s, deep-link and HEAD handling, and asset caching. After `pnpm build`, `pnpm test:e2e` starts the production server outside the repository, checks the healthcheck JSON, and compares the homepage, deep-link fallback, and referenced JavaScript to the real files in `apps/web/dist`. It also checks HEAD, caching, runtime config, and missing API/asset responses. No source application factory or synthetic HTML is used in this E2E test.
+
+`pnpm test:smoke` runs the server E2E and then the generated Vercel handler; it requires `pnpm build:vercel`. GitHub Actions runs these checks, builds the Docker image, and checks its health endpoint.
 
 The sample endpoints are public. Add real session validation and authorization before adding private data or write operations. Authentication, databases, admin business logic, cron jobs, and workflow providers are left for the consuming project.
 

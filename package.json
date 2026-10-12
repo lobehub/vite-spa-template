@@ -17,7 +17,8 @@
     "start": "pnpm --filter @lobehub/template-server start",
     "type-check": "pnpm -r type-check",
     "test": "pnpm --filter @lobehub/template-server test",
-    "test:smoke": "node scripts/smoke.mjs",
+    "test:e2e": "pnpm --filter @lobehub/template-server test:e2e",
+    "test:smoke": "pnpm test:e2e && node scripts/smoke.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
