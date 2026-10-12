@@ -1,0 +1,5 @@
+node_modules
+dist
+dist-server
+.vercel
+pnpm-lock.yaml

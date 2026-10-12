@@ -1,0 +1,25 @@
+name: CI
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm type-check
+      - run: pnpm test
+      - run: pnpm build:vercel
+      - run: pnpm test:smoke
+      - run: docker build -t vite-spa-template .
+      - run: |
+          docker run --rm -d --name template-smoke -p 3021:3021 vite-spa-template
+          curl --retry 10 --retry-connrefused --retry-delay 1 --fail http://localhost:3021/api/health
+          docker stop template-smoke
